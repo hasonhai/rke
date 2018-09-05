@@ -50,6 +50,9 @@ func UpCommand() cli.Command {
 			Name:  "disable-port-check",
 			Usage: "Disable port check validation between nodes",
 		},
+                cli.BoolFlag{
+                        Name:  "user-namespace-enabled",
+                        Usage: "Move privileged container to host namespace",
 	}
 
 	upFlags = append(upFlags, commonFlags...)
@@ -90,6 +93,11 @@ func ClusterUp(
 			return APIURL, caCrt, clientCert, clientKey, nil, err
 		}
 	}
+
+        if !userNamespaceEnabled {
+                #TODO
+                return nil
+        }
 
 	err = cluster.SetUpAuthentication(ctx, kubeCluster, currentCluster)
 	if err != nil {
