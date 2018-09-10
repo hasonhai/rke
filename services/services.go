@@ -96,7 +96,8 @@ func GetProcessConfig(process v3.Process) (*container.Config, *container.HostCon
 		NetworkMode: container.NetworkMode(process.NetworkMode),
 		PidMode:     container.PidMode(process.PidMode),
 		Privileged:  process.Privileged,
-        UsernsMode:  "host",
+		UsernsMode:  "host",
+		PortBindings: portBindings,
 	}
 	if len(process.RestartPolicy) > 0 {
 		hostCfg.RestartPolicy = container.RestartPolicy{Name: process.RestartPolicy}
