@@ -54,7 +54,7 @@ func doRunDeployer(ctx context.Context, host *hosts.Host, containerEnv []string,
 			fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
 		},
 		Privileged: true,
-        UsernsMode: "host",
+		UsernsMode: "host",
 	}
 	resp, err := host.DClient.ContainerCreate(ctx, imageCfg, hostCfg, nil, CrtDownloaderContainer)
 	if err != nil {
@@ -195,7 +195,7 @@ func FetchFileFromHost(ctx context.Context, filePath, image string, host *hosts.
 			fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
 		},
 		Privileged: true,
-                UsernsMode: "host",
+		UsernsMode: "host",
 	}
 	isRunning, err := docker.IsContainerRunning(ctx, host.DClient, host.Address, CertFetcherContainer, true)
 	if err != nil {

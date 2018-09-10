@@ -45,8 +45,8 @@ func UpCommand() cli.Command {
 			Name:  "disable-port-check",
 			Usage: "Disable port check validation between nodes",
 		},
-        cli.BoolFlag{
-            Name:  "user-namespace-enabled",
+		cli.BoolFlag{
+			Name:  "user-namespace-enabled",
 			Usage: "Execute privileged container in privileged namespace",
 		},
 	}
@@ -86,10 +86,10 @@ func ClusterUp(
 	}
 
 	if !userNamespaceEnabled {
-		fmt.Println("Port Checker is disabled in User Namespace mode")				
-        disablePortCheck = false
+		fmt.Println("Port Checker is disabled in User Namespace mode")
+		disablePortCheck = false
 	}
-	
+
 	if !disablePortCheck {
 		if err = kubeCluster.CheckClusterPorts(ctx, currentCluster); err != nil {
 			return APIURL, caCrt, clientCert, clientKey, nil, err

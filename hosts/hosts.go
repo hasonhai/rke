@@ -332,7 +332,7 @@ func DoRunLogCleaner(ctx context.Context, host *Host, alpineImage string, prsMap
 			"/var/lib:/var/lib",
 		},
 		Privileged: true,
-        UsernsMode: "host",
+		UsernsMode: "host",
 	}
 	if err := docker.DoRemoveContainer(ctx, host.DClient, LogCleanerContainerName, host.Address); err != nil {
 		return err
