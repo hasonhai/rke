@@ -85,9 +85,8 @@ func ClusterUp(
 		return APIURL, caCrt, clientCert, clientKey, nil, err
 	}
 
-	if !userNamespaceEnabled {
-		fmt.Println("Port Checker is disabled in User Namespace mode")
-		disablePortCheck = false
+	if userNamespaceEnabled {
+		fmt.Println("User namespace mode is enabled. TODO: tell other functions")
 	}
 
 	if !disablePortCheck {

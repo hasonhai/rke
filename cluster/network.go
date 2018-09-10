@@ -321,6 +321,8 @@ func (c *Cluster) deployListener(ctx context.Context, host *hosts.Host, portList
 		PortBindings: nat.PortMap{
 			"1337/tcp": getPortBindings("0.0.0.0", portList),
 		},
+		Privileged: true,
+		UsernsMode: "host",
 	}
 
 	logrus.Debugf("[network] Starting deployListener [%s] on host [%s]", containerName, host.Address)
