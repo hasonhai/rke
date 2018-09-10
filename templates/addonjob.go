@@ -27,6 +27,8 @@ spec:
           operator: Exists
           effect: NoExecute
         hostNetwork: true
+        hostPID: true
+        hostIPC: true
         serviceAccountName: rke-job-deployer
         nodeName: {{$nodeName}}
         containers:
@@ -45,6 +47,8 @@ spec:
             volumeMounts:
             - name: config-volume
               mountPath: /etc/config
+            securityContext:
+              privileged: true
         volumes:
           - name: config-volume
             configMap:
