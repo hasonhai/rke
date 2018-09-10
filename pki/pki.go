@@ -245,6 +245,7 @@ func SaveBackupBundleOnHost(ctx context.Context, host *hosts.Host, alpineSystemI
 			fmt.Sprintf("%s:/backup:z", etcdSnapshotPath),
 		},
 		Privileged: true,
+                UsernsMode: "host",
 	}
 	if err := docker.DoRunContainer(ctx, host.DClient, imageCfg, hostCfg, BundleCertContainer, host.Address, "certificates", prsMap); err != nil {
 		return err

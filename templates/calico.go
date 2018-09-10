@@ -183,6 +183,8 @@ spec:
                   values:
                     - windows
       hostNetwork: true
+      hostPID: true
+      hostIPC: true
       tolerations:
         # Make sure calico/node gets scheduled on all nodes.
         - effect: NoSchedule

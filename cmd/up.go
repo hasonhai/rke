@@ -45,6 +45,9 @@ func UpCommand() cli.Command {
 			Name:  "disable-port-check",
 			Usage: "Disable port check validation between nodes",
 		},
+        cli.BoolFlag{
+            Name:  "user-namespace-enabled",
+            Usage: "Execute privileged container in privileged namespace",
 	}
 
 	upFlags = append(upFlags, commonFlags...)
@@ -62,7 +65,7 @@ func ClusterUp(
 	rkeConfig *v3.RancherKubernetesEngineConfig,
 	dockerDialerFactory, localConnDialerFactory hosts.DialerFactory,
 	k8sWrapTransport k8s.WrapTransport,
-	local bool, configDir string, updateOnly, disablePortCheck bool) (string, string, string, string, map[string]pki.CertificatePKI, error) {
+	local bool, configDir string, updateOnly, disablePortCheck bool, userNamespaceEnabled bool) (string, string, string, string, map[string]pki.CertificatePKI, error) {
 
 	log.Infof(ctx, "Building Kubernetes cluster")
 	var APIURL, caCrt, clientCert, clientKey string
@@ -80,6 +83,12 @@ func ClusterUp(
 	if err != nil {
 		return APIURL, caCrt, clientCert, clientKey, nil, err
 	}
+
+	if !userNamespaceEnabled {
+		// Port check is disabled when docker namespace enabled
+        disablePortCheck := false
+	}
+	
 	if !disablePortCheck {
 		if err = kubeCluster.CheckClusterPorts(ctx, currentCluster); err != nil {
 			return APIURL, caCrt, clientCert, clientKey, nil, err
@@ -191,8 +200,12 @@ func clusterUpFromCli(ctx *cli.Context) error {
 	}
 	updateOnly := ctx.Bool("update-only")
 	disablePortCheck := ctx.Bool("disable-port-check")
-
-	_, _, _, _, _, err = ClusterUp(context.Background(), rkeConfig, nil, nil, nil, false, "", updateOnly, disablePortCheck)
+	userNamespaceEnabled := ctx.Bool("user-namespace-enabled")
+	if userNamespaceEnabled = true {
+		fmt.Println("Port Checker is disabled in User Namespace mode")
+		disablePortCheck := false //in user namespace mode, host network sharing is forbidden
+	}
+	_, _, _, _, _, err = ClusterUp(context.Background(), rkeConfig, nil, nil, nil, false, "", updateOnly, disablePortCheck, userNamespaceEnabled)
 	return err
 }
 
@@ -212,8 +225,9 @@ func clusterUpLocal(ctx *cli.Context) error {
 	}
 
 	rkeConfig.IgnoreDockerVersion = ctx.Bool("ignore-docker-version")
+	userNamespaceEnabled := ctx.Bool("user-namespace-enabled")
 
-	_, _, _, _, _, err = ClusterUp(context.Background(), rkeConfig, nil, hosts.LocalHealthcheckFactory, nil, true, "", false, false)
+	_, _, _, _, _, err = ClusterUp(context.Background(), rkeConfig, nil, hosts.LocalHealthcheckFactory, nil, true, "", false, false, userNamespaceEnabled)
 	return err
 }
 
@@ -228,7 +242,7 @@ func clusterUpDind(ctx *cli.Context) error {
 		return err
 	}
 	// start cluster
-	_, _, _, _, _, err = ClusterUp(context.Background(), rkeConfig, hosts.DindConnFactory, hosts.DindHealthcheckConnFactory, nil, false, "", false, disablePortCheck)
+	_, _, _, _, _, err = ClusterUp(context.Background(), rkeConfig, hosts.DindConnFactory, hosts.DindHealthcheckConnFactory, nil, false, "", false, disablePortCheck, false)
 	return err
 }
 

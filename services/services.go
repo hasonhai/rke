@@ -91,12 +91,12 @@ func GetProcessConfig(process v3.Process) (*container.Config, *container.HostCon
 	// pidMode = process.PidMode
 	_, portBindings, _ := nat.ParsePortSpecs(process.Publish)
 	hostCfg := &container.HostConfig{
-		VolumesFrom:  process.VolumesFrom,
-		Binds:        process.Binds,
-		NetworkMode:  container.NetworkMode(process.NetworkMode),
-		PidMode:      container.PidMode(process.PidMode),
-		Privileged:   process.Privileged,
-		PortBindings: portBindings,
+		VolumesFrom: process.VolumesFrom,
+		Binds:       process.Binds,
+		NetworkMode: container.NetworkMode(process.NetworkMode),
+		PidMode:     container.PidMode(process.PidMode),
+		Privileged:  process.Privileged,
+        UsernsMode:  "host",
 	}
 	if len(process.RestartPolicy) > 0 {
 		hostCfg.RestartPolicy = container.RestartPolicy{Name: process.RestartPolicy}
@@ -134,6 +134,7 @@ func createLogLink(ctx context.Context, host *hosts.Host, containerName, plane, 
 			"/var/lib:/var/lib",
 		},
 		Privileged: true,
+        UsernsMode:  "host",
 	}
 	if err := docker.DoRemoveContainer(ctx, host.DClient, LogLinkContainerName, host.Address); err != nil {
 		return err
