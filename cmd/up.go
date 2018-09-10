@@ -47,7 +47,8 @@ func UpCommand() cli.Command {
 		},
         cli.BoolFlag{
             Name:  "user-namespace-enabled",
-            Usage: "Execute privileged container in privileged namespace",
+			Usage: "Execute privileged container in privileged namespace",
+		},
 	}
 
 	upFlags = append(upFlags, commonFlags...)
@@ -201,7 +202,7 @@ func clusterUpFromCli(ctx *cli.Context) error {
 	updateOnly := ctx.Bool("update-only")
 	disablePortCheck := ctx.Bool("disable-port-check")
 	userNamespaceEnabled := ctx.Bool("user-namespace-enabled")
-	if userNamespaceEnabled = true {
+	if userNamespaceEnabled == true {
 		fmt.Println("Port Checker is disabled in User Namespace mode")
 		disablePortCheck := false //in user namespace mode, host network sharing is forbidden
 	}
