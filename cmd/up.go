@@ -86,7 +86,7 @@ func ClusterUp(
 	}
 
 	if !userNamespaceEnabled {
-		// Port check is disabled when docker namespace enabled
+		fmt.Println("Port Checker is disabled in User Namespace mode")				
         disablePortCheck := false
 	}
 	
@@ -202,10 +202,6 @@ func clusterUpFromCli(ctx *cli.Context) error {
 	updateOnly := ctx.Bool("update-only")
 	disablePortCheck := ctx.Bool("disable-port-check")
 	userNamespaceEnabled := ctx.Bool("user-namespace-enabled")
-	if userNamespaceEnabled == true {
-		fmt.Println("Port Checker is disabled in User Namespace mode")
-		disablePortCheck := false //in user namespace mode, host network sharing is forbidden
-	}
 	_, _, _, _, _, err = ClusterUp(context.Background(), rkeConfig, nil, nil, nil, false, "", updateOnly, disablePortCheck, userNamespaceEnabled)
 	return err
 }
